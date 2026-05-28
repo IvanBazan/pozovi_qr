@@ -80,102 +80,111 @@ export default function QRDisplay({ link }) {
 
       <div ref={containerRef} className="qr-container" />
 
-      <div className="qr-settings">
+      <div className="qr-settings-columns">
 
-        <div className="settings-section">Основные</div>
+        <div className="qr-settings">
+          <div className="settings-section">Основные</div>
 
-        <span className="settings-label">Размер (скачивание)</span>
-        <div className="settings-range">
-          <input type="range" min="200" max="1000" step="50" value={s.size} onChange={setNum('size')} />
-          <span>{s.size}px</span>
+          <span className="settings-label">Стиль точек</span>
+          <select value={s.dotsType} onChange={set('dotsType')}>
+            {DOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
+
+          <div className="settings-section">Цвета</div>
+
+          <span className="settings-label">Градиент</span>
+          <label className="toggle">
+            <input type="checkbox" checked={s.gradient} onChange={toggle('gradient')} />
+            {s.gradient ? 'Вкл' : 'Выкл'}
+          </label>
+
+          {s.gradient ? (
+            <>
+              <span className="settings-label">Тип</span>
+              <select value={s.gradientType} onChange={set('gradientType')}>
+                {GRADIENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+              </select>
+
+              <span className="settings-label">Цвет 1</span>
+              <ColorInput value={s.dotsColor} onChange={set('dotsColor')} />
+
+              <span className="settings-label">Цвет 2</span>
+              <ColorInput value={s.dotsColor2} onChange={set('dotsColor2')} />
+            </>
+          ) : (
+            <>
+              <span className="settings-label">Цвет точек</span>
+              <ColorInput value={s.dotsColor} onChange={set('dotsColor')} />
+            </>
+          )}
+
+          <span className="settings-label">Цвет фона</span>
+          <ColorInput value={s.bgColor} onChange={set('bgColor')} />
         </div>
 
-        <span className="settings-label">Стиль точек</span>
-        <select value={s.dotsType} onChange={set('dotsType')}>
-          {DOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
+        <div className="qr-settings">
+          <div className="settings-section">Углы</div>
 
-        <div className="settings-section">Цвета</div>
+          <span className="settings-label">Стиль углов</span>
+          <select value={s.cornerType} onChange={set('cornerType')}>
+            {CORNER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
 
-        <span className="settings-label">Градиент</span>
-        <label className="toggle">
-          <input type="checkbox" checked={s.gradient} onChange={toggle('gradient')} />
-          {s.gradient ? 'Вкл' : 'Выкл'}
-        </label>
+          <span className="settings-label">Цвет углов</span>
+          <ColorInput value={s.cornerColor} onChange={set('cornerColor')} />
 
-        {s.gradient ? (
-          <>
-            <span className="settings-label">Тип</span>
-            <select value={s.gradientType} onChange={set('gradientType')}>
-              {GRADIENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-            </select>
+          <span className="settings-label">Стиль угл. точек</span>
+          <select value={s.cornerDotType} onChange={set('cornerDotType')}>
+            {CORNER_DOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+          </select>
 
-            <span className="settings-label">Цвет 1</span>
-            <ColorInput value={s.dotsColor} onChange={set('dotsColor')} />
+          <span className="settings-label">Цвет угл. точек</span>
+          <ColorInput value={s.cornerDotColor} onChange={set('cornerDotColor')} />
 
-            <span className="settings-label">Цвет 2</span>
-            <ColorInput value={s.dotsColor2} onChange={set('dotsColor2')} />
-          </>
-        ) : (
-          <>
-            <span className="settings-label">Цвет точек</span>
-            <ColorInput value={s.dotsColor} onChange={set('dotsColor')} />
-          </>
-        )}
+          <div className="settings-section">Логотип</div>
 
-        <span className="settings-label">Цвет фона</span>
-        <ColorInput value={s.bgColor} onChange={set('bgColor')} />
+          <span className="settings-label">Файл</span>
+          <input type="file" accept="image/png,image/svg+xml" onChange={handleLogo} />
 
-        <div className="settings-section">Углы</div>
+          {s.logo && (
+            <>
+              <span className="settings-label">
+                <img src={s.logo} alt="logo" className="logo-thumb" />
+              </span>
+              <button className="btn-remove-logo" onClick={() => setS(p => ({ ...p, logo: null }))}>
+                Удалить
+              </button>
 
-        <span className="settings-label">Стиль углов</span>
-        <select value={s.cornerType} onChange={set('cornerType')}>
-          {CORNER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
+              <span className="settings-label">Размер лого</span>
+              <div className="settings-range">
+                <input type="range" min="0.1" max="0.5" step="0.05" value={s.logoSize} onChange={setNum('logoSize')} />
+                <span>{Math.round(s.logoSize * 100)}%</span>
+              </div>
 
-        <span className="settings-label">Цвет углов</span>
-        <ColorInput value={s.cornerColor} onChange={set('cornerColor')} />
+              <span className="settings-label">Отступ лого</span>
+              <div className="settings-range">
+                <input type="range" min="0" max="20" step="1" value={s.logoMargin} onChange={setNum('logoMargin')} />
+                <span>{s.logoMargin}px</span>
+              </div>
+            </>
+          )}
+        </div>
 
-        <span className="settings-label">Стиль угл. точек</span>
-        <select value={s.cornerDotType} onChange={set('cornerDotType')}>
-          {CORNER_DOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-        </select>
-
-        <span className="settings-label">Цвет угл. точек</span>
-        <ColorInput value={s.cornerDotColor} onChange={set('cornerDotColor')} />
-
-        <div className="settings-section">Логотип</div>
-
-        <span className="settings-label">Файл</span>
-        <input type="file" accept="image/png,image/svg+xml" onChange={handleLogo} />
-
-        {s.logo && (
-          <>
-            <span className="settings-label">
-              <img src={s.logo} alt="logo" className="logo-thumb" />
-            </span>
-            <button className="btn-remove-logo" onClick={() => setS(p => ({ ...p, logo: null }))}>
-              Удалить
-            </button>
-
-            <span className="settings-label">Размер лого</span>
-            <div className="settings-range">
-              <input type="range" min="0.1" max="0.5" step="0.05" value={s.logoSize} onChange={setNum('logoSize')} />
-              <span>{Math.round(s.logoSize * 100)}%</span>
-            </div>
-
-            <span className="settings-label">Отступ лого</span>
-            <div className="settings-range">
-              <input type="range" min="0" max="20" step="1" value={s.logoMargin} onChange={setNum('logoMargin')} />
-              <span>{s.logoMargin}px</span>
-            </div>
-          </>
-        )}
       </div>
 
-      <div className="qr-actions">
-        <button className="btn-download" onClick={() => handleDownload('png')}>PNG</button>
-        <button className="btn-download" onClick={() => handleDownload('svg')}>SVG</button>
+      <div className="qr-download">
+        <div className="settings-section" style={{ borderTop: '1px solid #eee', paddingTop: 10 }}>Скачивание</div>
+        <div className="qr-download-row">
+          <span className="settings-label">Размер</span>
+          <div className="settings-range">
+            <input type="range" min="200" max="1000" step="50" value={s.size} onChange={setNum('size')} />
+            <span>{s.size}px</span>
+          </div>
+        </div>
+        <div className="qr-actions">
+          <button className="btn-download" onClick={() => handleDownload('png')}>PNG</button>
+          <button className="btn-download" onClick={() => handleDownload('svg')}>SVG</button>
+        </div>
       </div>
     </div>
   );

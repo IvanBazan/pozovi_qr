@@ -31,7 +31,7 @@ export default function App() {
         <h1>pozovi.tours — QR Admin</h1>
       </header>
       <main>
-        <div className="left">
+        <div className="col-left">
           <LinkTable
             links={links}
             selected={selected}
@@ -40,8 +40,10 @@ export default function App() {
             onUpdate={handleUpdate}
           />
         </div>
-        <div className="right">
+        <div className="col-center">
           <QRDisplay link={selected} />
+        </div>
+        <div className="col-right">
           <ClickStats link={selected} />
         </div>
       </main>

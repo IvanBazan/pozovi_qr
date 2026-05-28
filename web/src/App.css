@@ -30,13 +30,14 @@ header h1 {
 
 main {
   display: grid;
-  grid-template-columns: 1fr 380px;
+  grid-template-columns: 280px 1fr 280px;
   gap: 16px;
   padding: 16px;
   flex: 1;
+  align-items: start;
 }
 
-.left, .right {
+.col-left, .col-center, .col-right {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -161,13 +162,39 @@ tbody tr.selected {
   margin-bottom: 16px;
 }
 
+.qr-settings-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 24px;
+  margin-bottom: 12px;
+}
+
 .qr-settings {
   display: grid;
-  grid-template-columns: 120px 1fr;
+  grid-template-columns: 100px 1fr;
   gap: 10px 12px;
   align-items: center;
-  margin-bottom: 14px;
   text-align: left;
+}
+
+.qr-download {
+  border-top: 1px solid #eee;
+  padding-top: 12px;
+  margin-top: 4px;
+}
+
+.qr-download .settings-section {
+  border-top: none;
+  padding-top: 0;
+  margin-bottom: 8px;
+}
+
+.qr-download-row {
+  display: grid;
+  grid-template-columns: 100px 1fr;
+  gap: 10px 12px;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .settings-label {
