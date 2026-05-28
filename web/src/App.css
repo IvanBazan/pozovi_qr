@@ -187,13 +187,30 @@ tbody tr.selected {
   width: 100%;
 }
 
-.qr-settings input[type="color"] {
-  width: 100%;
+.color-input {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.color-input input[type="color"] {
+  width: 36px;
   height: 28px;
   padding: 0 2px;
   border: 1px solid #ddd;
   border-radius: 4px;
   cursor: pointer;
+  flex-shrink: 0;
+}
+
+.color-input input[type="text"] {
+  width: 72px;
+  font-family: monospace;
+  font-size: 13px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 3px 6px;
+  color: #333;
 }
 
 .settings-range {
