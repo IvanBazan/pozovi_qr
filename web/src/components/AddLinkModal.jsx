@@ -11,6 +11,10 @@ export default function AddLinkModal({ onClose, onCreated }) {
   const submit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!/^https?:\/\/.+/.test(form.target_url)) {
+      setError('URL должен начинаться с http:// или https://');
+      return;
+    }
     setLoading(true);
     try {
       const link = await createLink(form);

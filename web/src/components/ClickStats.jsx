@@ -13,6 +13,8 @@ export default function ClickStats({ link }) {
   if (!link) return null;
   if (!stats) return <div className="panel"><p>Загрузка...</p></div>;
 
+  const hasCountry = stats.recent_clicks.some(c => c.country);
+
   return (
     <div className="panel">
       <h2>Статистика</h2>
@@ -22,7 +24,7 @@ export default function ClickStats({ link }) {
           <thead>
             <tr>
               <th>IP</th>
-              <th>Страна</th>
+              {hasCountry && <th>Страна</th>}
               <th>Время</th>
             </tr>
           </thead>
@@ -30,7 +32,7 @@ export default function ClickStats({ link }) {
             {stats.recent_clicks.map((c, i) => (
               <tr key={i}>
                 <td><code>{c.ip}</code></td>
-                <td>{c.country || '—'}</td>
+                {hasCountry && <td>{c.country || '—'}</td>}
                 <td>{new Date(c.clicked_at).toLocaleString('ru')}</td>
               </tr>
             ))}
