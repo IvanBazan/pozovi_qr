@@ -1,0 +1,13 @@
+FROM golang:1.23-alpine AS builder
+WORKDIR /build
+COPY go.mod go.sum ./
+RUN go mod download
+COPY . .
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /redirector ./cmd/redirector
+
+FROM alpine:3.21
+RUN apk add --no-cache ca-certificates && adduser -D appuser
+COPY --from=builder /redirector /redirector
+USER appuser
+EXPOSE 8080
+ENTRYPOINT ["/redirector"]
