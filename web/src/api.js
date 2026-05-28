@@ -16,3 +16,10 @@ export const createLink = (data) =>
 
 export const fetchStats = (id) =>
   fetch(`${BASE}/links/${id}/stats`).then(r => r.json());
+
+export const toggleLink = (id, isActive) =>
+  fetch(`${BASE}/links/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ is_active: isActive }),
+  }).then(r => r.json());

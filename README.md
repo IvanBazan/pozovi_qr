@@ -40,6 +40,11 @@ curl -X POST http://<ip>/api/links \
   -H 'Content-Type: application/json' \
   -d '{"slug":"klub","target_url":"https://t.me/tkpozovi","title":"Телеграм клуба"}'
 
+# деактивировать / активировать ссылку
+curl -X PATCH http://<ip>/api/links/1 \
+  -H 'Content-Type: application/json' \
+  -d '{"is_active": false}'
+
 # статистика по ссылке (id из списка)
 curl http://<ip>/api/links/1/stats
 ```
@@ -51,6 +56,7 @@ curl http://<ip>/api/links/1/stats
 Возможности:
 - Список всех ссылок
 - Создание новой ссылки (slug, URL, title)
+- Деактивация / активация ссылки кнопкой в таблице
 - QR-код для выбранной ссылки (генерируется на клиенте)
 - Статистика кликов: total + 10 последних (IP, страна, время)
 

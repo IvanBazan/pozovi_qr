@@ -62,6 +62,34 @@ func (a *API) CreateLink(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(link)
 }
 
+func (a *API) PatchLink(w http.ResponseWriter, r *http.Request) {
+	idStr := r.PathValue("id")
+	id, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		jsonError(w, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	var body struct {
+		IsActive *bool `json:"is_active"`
+	}
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.IsActive == nil {
+		jsonError(w, "is_active required", http.StatusBadRequest)
+		return
+	}
+
+	link, err := a.store.SetLinkActive(r.Context(), id, *body.IsActive)
+	if errors.Is(err, pgx.ErrNoRows) {
+		jsonError(w, "not found", http.StatusNotFound)
+		return
+	}
+	if err != nil {
+		jsonError(w, "internal error", http.StatusInternalServerError)
+		return
+	}
+	jsonOK(w, link)
+}
+
 func (a *API) GetStats(w http.ResponseWriter, r *http.Request) {
 	idStr := r.PathValue("id")
 	id, err := strconv.ParseInt(idStr, 10, 64)

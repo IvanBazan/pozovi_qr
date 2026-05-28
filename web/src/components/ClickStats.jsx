@@ -7,8 +7,8 @@ export default function ClickStats({ link }) {
   useEffect(() => {
     if (!link) return;
     setStats(null);
-    fetchStats(link.ID).then(setStats);
-  }, [link?.ID]);
+    fetchStats(link.id).then(setStats);
+  }, [link?.id]);
 
   if (!link) return null;
   if (!stats) return <div className="panel"><p>Загрузка...</p></div>;
@@ -29,9 +29,9 @@ export default function ClickStats({ link }) {
           <tbody>
             {stats.recent_clicks.map((c, i) => (
               <tr key={i}>
-                <td><code>{c.IP}</code></td>
-                <td>{c.Country || '—'}</td>
-                <td>{new Date(c.ClickedAt).toLocaleString('ru')}</td>
+                <td><code>{c.ip}</code></td>
+                <td>{c.country || '—'}</td>
+                <td>{new Date(c.clicked_at).toLocaleString('ru')}</td>
               </tr>
             ))}
           </tbody>

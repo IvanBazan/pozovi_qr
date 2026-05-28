@@ -1,4 +1,12 @@
-export default function LinkTable({ links, selected, onSelect, onAdd }) {
+import { toggleLink } from '../api';
+
+export default function LinkTable({ links, selected, onSelect, onAdd, onUpdate }) {
+  const handleToggle = async (e, link) => {
+    e.stopPropagation();
+    const updated = await toggleLink(link.id, !link.is_active);
+    onUpdate(updated);
+  };
+
   return (
     <div className="panel">
       <div className="panel-header">
@@ -17,14 +25,21 @@ export default function LinkTable({ links, selected, onSelect, onAdd }) {
         <tbody>
           {links.map(link => (
             <tr
-              key={link.ID}
-              className={selected?.ID === link.ID ? 'selected' : ''}
+              key={link.id}
+              className={selected?.id === link.id ? 'selected' : ''}
               onClick={() => onSelect(link)}
             >
-              <td><code>{link.Slug}</code></td>
-              <td>{link.Title || '—'}</td>
-              <td className="url-cell">{link.TargetURL}</td>
-              <td>{link.IsActive ? '✓' : '✗'}</td>
+              <td><code>{link.slug}</code></td>
+              <td>{link.title || '—'}</td>
+              <td className="url-cell">{link.target_url}</td>
+              <td>
+                <button
+                  className={`btn-toggle ${link.is_active ? 'active' : 'inactive'}`}
+                  onClick={(e) => handleToggle(e, link)}
+                >
+                  {link.is_active ? '✓' : '✗'}
+                </button>
+              </td>
             </tr>
           ))}
           {links.length === 0 && (

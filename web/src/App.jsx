@@ -20,6 +20,11 @@ export default function App() {
     setSelected(link);
   };
 
+  const handleUpdate = (link) => {
+    setLinks(l => l.map(x => x.id === link.id ? link : x));
+    setSelected(s => s?.id === link.id ? link : s);
+  };
+
   return (
     <div className="layout">
       <header>
@@ -32,6 +37,7 @@ export default function App() {
             selected={selected}
             onSelect={setSelected}
             onAdd={() => setShowModal(true)}
+            onUpdate={handleUpdate}
           />
         </div>
         <div className="right">

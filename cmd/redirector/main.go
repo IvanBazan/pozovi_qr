@@ -51,6 +51,7 @@ func main() {
 	})
 	mux.HandleFunc("GET /api/links", apiHandler.ListLinks)
 	mux.HandleFunc("POST /api/links", apiHandler.CreateLink)
+	mux.HandleFunc("PATCH /api/links/{id}", apiHandler.PatchLink)
 	mux.HandleFunc("GET /api/links/{id}/stats", apiHandler.GetStats)
 	mux.Handle("/", redirectHandler)
 

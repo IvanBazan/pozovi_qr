@@ -8,12 +8,12 @@ import (
 )
 
 type Link struct {
-	ID        int64
-	Slug      string
-	TargetURL string
-	Title     string
-	IsActive  bool
-	CreatedAt time.Time
+	ID        int64     `json:"id"`
+	Slug      string    `json:"slug"`
+	TargetURL string    `json:"target_url"`
+	Title     string    `json:"title"`
+	IsActive  bool      `json:"is_active"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Click struct {
@@ -85,10 +85,21 @@ func (s *Store) CreateLink(ctx context.Context, slug, targetURL, title string) (
 	return l, err
 }
 
+func (s *Store) SetLinkActive(ctx context.Context, id int64, active bool) (Link, error) {
+	row := s.pool.QueryRow(ctx,
+		`UPDATE links SET is_active = $1 WHERE id = $2
+		 RETURNING id, slug, target_url, title, is_active, created_at`,
+		active, id,
+	)
+	var l Link
+	err := row.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt)
+	return l, err
+}
+
 type ClickStat struct {
-	IP        string
-	Country   string
-	ClickedAt time.Time
+	IP        string    `json:"ip"`
+	Country   string    `json:"country"`
+	ClickedAt time.Time `json:"clicked_at"`
 }
 
 func (s *Store) GetLinkStats(ctx context.Context, linkID int64) (int64, []ClickStat, error) {
