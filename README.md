@@ -19,6 +19,24 @@ docker compose exec postgres psql -U pozovi -d pozovi_qr < db/seed.sql
 curl -I http://<vps-ip>/google   # → HTTP 302
 ```
 
+### Basic Auth
+
+Защищает `/admin` и `/api/`. Публичные редиректы `/{slug}` остаются без авторизации.
+
+```bash
+apt install apache2-utils -y
+htpasswd -c nginx/.htpasswd admin   # введёт пароль интерактивно
+docker compose up -d --build nginx
+```
+
+Для добавления второго пользователя (без `-c`, чтобы не перезаписать файл):
+
+```bash
+htpasswd nginx/.htpasswd user2
+```
+
+---
+
 ### SSL (Let's Encrypt)
 
 Выполнить один раз на VPS. Nginx нужно остановить — certbot займёт порт 80 для проверки домена.
