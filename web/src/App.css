@@ -3,6 +3,9 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 header {
@@ -18,7 +21,7 @@ header h1 {
 
 main {
   display: grid;
-  grid-template-columns: 360px 1fr;
+  grid-template-columns: 320px 1fr;
   gap: 16px;
   padding: 16px 24px;
   flex: 1;
@@ -96,11 +99,22 @@ tbody tr.selected {
 }
 
 .url-cell {
-  max-width: 240px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   color: #555;
+  max-width: 0;
+  width: 100%;
+}
+
+.col-status {
+  width: 28px;
+  text-align: center;
+  padding: 4px !important;
+}
+
+.col-url {
+  width: 100%;
 }
 
 .empty {
@@ -147,7 +161,7 @@ tbody tr.selected {
 .qr-container {
   display: flex;
   justify-content: center;
-  margin-bottom: 16px;
+  margin: 0 auto 16px;
 }
 
 .qr-settings-columns {
@@ -169,6 +183,9 @@ tbody tr.selected {
   border-top: 1px solid #eee;
   padding-top: 12px;
   margin-top: 4px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .qr-download .settings-section {
@@ -204,6 +221,7 @@ tbody tr.selected {
 
 .qr-settings select {
   width: 100%;
+  max-width: 200px;
   padding: 4px 8px;
   font-size: 13px;
   border: 1px solid #ccc;
@@ -218,6 +236,7 @@ tbody tr.selected {
   font-size: 12px;
   color: #555;
   width: 100%;
+  max-width: 200px;
 }
 
 .color-input {
