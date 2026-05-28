@@ -44,9 +44,28 @@ curl -X POST http://<ip>/api/links \
 curl http://<ip>/api/links/1/stats
 ```
 
+### Админка
+
+Доступна по адресу `http://<ip>/admin` после деплоя.
+
+Возможности:
+- Список всех ссылок
+- Создание новой ссылки (slug, URL, title)
+- QR-код для выбранной ссылки (генерируется на клиенте)
+- Статистика кликов: total + 10 последних (IP, страна, время)
+
+**IP-ограничение** (рекомендуется): раскомментировать в `nginx/default.conf`:
+```nginx
+allow <ADMIN_IP>;
+deny all;
+```
+для блоков `/admin` и `/api/`, затем `docker compose up -d --build`.
+
+---
+
 ### Управление ссылками
 
-Пока без админки — через psql:
+Альтернативно — через psql:
 
 ```bash
 docker compose exec postgres psql -U pozovi -d pozovi_qr

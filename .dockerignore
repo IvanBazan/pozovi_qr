@@ -2,3 +2,5 @@
 .env
 data/
 *.md
+web/node_modules
+web/dist
