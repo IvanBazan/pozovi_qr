@@ -111,7 +111,7 @@ func (s *Store) GetLinkStats(ctx context.Context, linkID int64) (int64, []ClickS
 	}
 
 	rows, err := s.pool.Query(ctx,
-		`SELECT ip, country, clicked_at FROM clicks
+		`SELECT ip::text, COALESCE(country, ''), clicked_at FROM clicks
 		 WHERE link_id = $1 ORDER BY clicked_at DESC LIMIT 10`,
 		linkID,
 	)
