@@ -12,7 +12,10 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    fetchLinks().then(setLinks);
+    fetchLinks().then(links => {
+      setLinks(links);
+      if (links.length > 0) setSelected(links[0]);
+    });
   }, []);
 
   const handleCreated = (link) => {
