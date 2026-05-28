@@ -29,6 +29,21 @@ cp docker-compose.override.yml.example docker-compose.override.yml
 docker compose up -d
 ```
 
+### API
+
+```bash
+# список всех ссылок
+curl http://<ip>/api/links
+
+# создать ссылку
+curl -X POST http://<ip>/api/links \
+  -H 'Content-Type: application/json' \
+  -d '{"slug":"klub","target_url":"https://t.me/tkpozovi","title":"Телеграм клуба"}'
+
+# статистика по ссылке (id из списка)
+curl http://<ip>/api/links/1/stats
+```
+
 ### Управление ссылками
 
 Пока без админки — через psql:
@@ -39,7 +54,7 @@ docker compose exec postgres psql -U pozovi -d pozovi_qr
 
 ```sql
 -- добавить ссылку
-INSERT INTO links (slug, target_url, title) VALUES ('klub', 'https://t.me/pozovi', 'Телеграм клуба');
+INSERT INTO links (slug, target_url, title) VALUES ('klub', 'https://t.me/tkpozovi', 'Телеграм клуба');
 
 -- деактивировать
 UPDATE links SET is_active = false WHERE slug = 'klub';
