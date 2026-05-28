@@ -82,6 +82,8 @@ export default function QRDisplay({ link }) {
 
       <div className="qr-settings">
 
+        <div className="settings-section">Основные</div>
+
         <span className="settings-label">Размер (скачивание)</span>
         <div className="settings-range">
           <input type="range" min="200" max="1000" step="50" value={s.size} onChange={setNum('size')} />
@@ -93,6 +95,8 @@ export default function QRDisplay({ link }) {
           {DOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
         </select>
 
+        <div className="settings-section">Цвета</div>
+
         <span className="settings-label">Градиент</span>
         <label className="toggle">
           <input type="checkbox" checked={s.gradient} onChange={toggle('gradient')} />
@@ -101,7 +105,7 @@ export default function QRDisplay({ link }) {
 
         {s.gradient ? (
           <>
-            <span className="settings-label">Тип градиента</span>
+            <span className="settings-label">Тип</span>
             <select value={s.gradientType} onChange={set('gradientType')}>
               {GRADIENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
             </select>
@@ -122,6 +126,8 @@ export default function QRDisplay({ link }) {
         <span className="settings-label">Цвет фона</span>
         <ColorInput value={s.bgColor} onChange={set('bgColor')} />
 
+        <div className="settings-section">Углы</div>
+
         <span className="settings-label">Стиль углов</span>
         <select value={s.cornerType} onChange={set('cornerType')}>
           {CORNER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
@@ -138,7 +144,9 @@ export default function QRDisplay({ link }) {
         <span className="settings-label">Цвет угл. точек</span>
         <ColorInput value={s.cornerDotColor} onChange={set('cornerDotColor')} />
 
-        <span className="settings-label">Логотип</span>
+        <div className="settings-section">Логотип</div>
+
+        <span className="settings-label">Файл</span>
         <input type="file" accept="image/png,image/svg+xml" onChange={handleLogo} />
 
         {s.logo && (
@@ -147,7 +155,7 @@ export default function QRDisplay({ link }) {
               <img src={s.logo} alt="logo" className="logo-thumb" />
             </span>
             <button className="btn-remove-logo" onClick={() => setS(p => ({ ...p, logo: null }))}>
-              Удалить лого
+              Удалить
             </button>
 
             <span className="settings-label">Размер лого</span>

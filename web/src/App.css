@@ -163,71 +163,94 @@ tbody tr.selected {
 
 .qr-settings {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px 12px;
+  grid-template-columns: 120px 1fr;
+  gap: 10px 12px;
   align-items: center;
   margin-bottom: 14px;
-  font-size: 13px;
+  text-align: left;
 }
 
 .settings-label {
-  color: #555;
-  white-space: nowrap;
+  font-size: 13px;
+  color: #666;
+  text-align: right;
 }
 
-.qr-settings select,
-.qr-settings input[type="file"] {
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  padding: 3px 6px;
+.settings-section {
+  grid-column: 1 / -1;
+  border-top: 1px solid #eee;
+  padding-top: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #aaa;
+}
+
+.qr-settings select {
+  width: 100%;
+  padding: 4px 8px;
   font-size: 13px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
   background: #fff;
   color: #333;
   cursor: pointer;
+  height: 30px;
+}
+
+.qr-settings input[type="file"] {
+  font-size: 12px;
+  color: #555;
   width: 100%;
 }
 
 .color-input {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   align-items: center;
 }
 
 .color-input input[type="color"] {
-  width: 36px;
-  height: 28px;
-  padding: 0 2px;
-  border: 1px solid #ddd;
+  width: 32px;
+  height: 32px;
+  padding: 2px;
+  border: 1px solid #ccc;
   border-radius: 4px;
   cursor: pointer;
   flex-shrink: 0;
 }
 
 .color-input input[type="text"] {
-  width: 72px;
+  width: 80px;
   font-family: monospace;
   font-size: 13px;
-  border: 1px solid #ddd;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  padding: 3px 6px;
+  background: #fff;
   color: #333;
+}
+
+.color-input input[type="text"]::placeholder {
+  color: #bbb;
 }
 
 .settings-range {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.settings-range input {
+.settings-range input[type="range"] {
   flex: 1;
 }
 
 .settings-range span {
-  font-size: 12px;
-  color: #888;
+  min-width: 50px;
+  font-size: 13px;
+  color: #666;
   white-space: nowrap;
-  min-width: 36px;
 }
 
 .toggle {
@@ -235,6 +258,7 @@ tbody tr.selected {
   align-items: center;
   gap: 6px;
   cursor: pointer;
+  font-size: 13px;
   color: #333;
 }
 
@@ -245,13 +269,17 @@ tbody tr.selected {
 }
 
 .btn-remove-logo {
-  background: none;
-  border: 1px solid #ddd;
+  background: #fff;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  padding: 3px 8px;
+  padding: 4px 10px;
   font-size: 12px;
-  color: #888;
+  color: #666;
   cursor: pointer;
+}
+
+.btn-remove-logo:hover {
+  background: #f5f5f5;
 }
 
 .qr-actions {
