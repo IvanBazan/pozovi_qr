@@ -8,10 +8,12 @@ import (
 )
 
 type Link struct {
-	ID        int64
-	Slug      string
-	TargetURL string
-	IsActive  bool
+	ID        int64     `json:"id"`
+	Slug      string    `json:"slug"`
+	TargetURL string    `json:"target_url"`
+	Title     string    `json:"title"`
+	IsActive  bool      `json:"is_active"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 type Click struct {
@@ -49,6 +51,84 @@ func (s *Store) GetLink(ctx context.Context, slug string) (*Link, error) {
 		return nil, err
 	}
 	return &l, nil
+}
+
+func (s *Store) ListLinks(ctx context.Context) ([]Link, error) {
+	rows, err := s.pool.Query(ctx,
+		`SELECT id, slug, target_url, title, is_active, created_at FROM links ORDER BY created_at DESC`,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var links []Link
+	for rows.Next() {
+		var l Link
+		if err := rows.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt); err != nil {
+			return nil, err
+		}
+		links = append(links, l)
+	}
+	return links, rows.Err()
+}
+
+func (s *Store) CreateLink(ctx context.Context, slug, targetURL, title string) (Link, error) {
+	row := s.pool.QueryRow(ctx,
+		`INSERT INTO links (slug, target_url, title)
+		 VALUES ($1, $2, $3)
+		 RETURNING id, slug, target_url, title, is_active, created_at`,
+		slug, targetURL, title,
+	)
+	var l Link
+	err := row.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt)
+	return l, err
+}
+
+func (s *Store) SetLinkActive(ctx context.Context, id int64, active bool) (Link, error) {
+	row := s.pool.QueryRow(ctx,
+		`UPDATE links SET is_active = $1 WHERE id = $2
+		 RETURNING id, slug, target_url, title, is_active, created_at`,
+		active, id,
+	)
+	var l Link
+	err := row.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt)
+	return l, err
+}
+
+type ClickStat struct {
+	IP        string    `json:"ip"`
+	Country   string    `json:"country"`
+	ClickedAt time.Time `json:"clicked_at"`
+}
+
+func (s *Store) GetLinkStats(ctx context.Context, linkID int64) (int64, []ClickStat, error) {
+	var total int64
+	if err := s.pool.QueryRow(ctx,
+		`SELECT COUNT(*) FROM clicks WHERE link_id = $1`, linkID,
+	).Scan(&total); err != nil {
+		return 0, nil, err
+	}
+
+	rows, err := s.pool.Query(ctx,
+		`SELECT ip::text, COALESCE(country, ''), clicked_at FROM clicks
+		 WHERE link_id = $1 ORDER BY clicked_at DESC LIMIT 10`,
+		linkID,
+	)
+	if err != nil {
+		return 0, nil, err
+	}
+	defer rows.Close()
+
+	var recent []ClickStat
+	for rows.Next() {
+		var c ClickStat
+		if err := rows.Scan(&c.IP, &c.Country, &c.ClickedAt); err != nil {
+			return 0, nil, err
+		}
+		recent = append(recent, c)
+	}
+	return total, recent, rows.Err()
 }
 
 func (s *Store) InsertClicks(ctx context.Context, clicks []Click) error {

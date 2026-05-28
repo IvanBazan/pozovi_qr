@@ -42,11 +42,18 @@ func main() {
 	clWriter := clicklog.New(store)
 	defer clWriter.Close()
 
+	apiHandler := handler.NewAPI(store)
+	redirectHandler := handler.NewRedirect(store, geodb, clWriter)
+
 	mux := http.NewServeMux()
-	mux.Handle("/health", http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+	mux.HandleFunc("GET /health", func(w http.ResponseWriter, _ *http.Request) {
 		w.WriteHeader(http.StatusOK)
-	}))
-	mux.Handle("/", handler.NewRedirect(store, geodb, clWriter))
+	})
+	mux.HandleFunc("GET /api/links", apiHandler.ListLinks)
+	mux.HandleFunc("POST /api/links", apiHandler.CreateLink)
+	mux.HandleFunc("PATCH /api/links/{id}", apiHandler.PatchLink)
+	mux.HandleFunc("GET /api/links/{id}/stats", apiHandler.GetStats)
+	mux.Handle("/", redirectHandler)
 
 	srv := &http.Server{
 		Addr:         addr,

@@ -29,9 +29,49 @@ cp docker-compose.override.yml.example docker-compose.override.yml
 docker compose up -d
 ```
 
+### API
+
+```bash
+# список всех ссылок
+curl http://<ip>/api/links
+
+# создать ссылку
+curl -X POST http://<ip>/api/links \
+  -H 'Content-Type: application/json' \
+  -d '{"slug":"klub","target_url":"https://t.me/tkpozovi","title":"Телеграм клуба"}'
+
+# деактивировать / активировать ссылку
+curl -X PATCH http://<ip>/api/links/1 \
+  -H 'Content-Type: application/json' \
+  -d '{"is_active": false}'
+
+# статистика по ссылке (id из списка)
+curl http://<ip>/api/links/1/stats
+```
+
+### Админка
+
+Доступна по адресу `http://<ip>/admin` после деплоя.
+
+Возможности:
+- Список всех ссылок
+- Создание новой ссылки (slug, URL, title)
+- Деактивация / активация ссылки кнопкой в таблице
+- QR-код для выбранной ссылки (генерируется на клиенте)
+- Статистика кликов: total + 10 последних (IP, страна, время)
+
+**IP-ограничение** (рекомендуется): раскомментировать в `nginx/default.conf`:
+```nginx
+allow <ADMIN_IP>;
+deny all;
+```
+для блоков `/admin` и `/api/`, затем `docker compose up -d --build`.
+
+---
+
 ### Управление ссылками
 
-Пока без админки — через psql:
+Альтернативно — через psql:
 
 ```bash
 docker compose exec postgres psql -U pozovi -d pozovi_qr
@@ -39,7 +79,7 @@ docker compose exec postgres psql -U pozovi -d pozovi_qr
 
 ```sql
 -- добавить ссылку
-INSERT INTO links (slug, target_url, title) VALUES ('klub', 'https://t.me/pozovi', 'Телеграм клуба');
+INSERT INTO links (slug, target_url, title) VALUES ('klub', 'https://t.me/tkpozovi', 'Телеграм клуба');
 
 -- деактивировать
 UPDATE links SET is_active = false WHERE slug = 'klub';
