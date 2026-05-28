@@ -162,22 +162,21 @@ tbody tr.selected {
 }
 
 .qr-settings {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.qr-settings label {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 12px;
   align-items: center;
-  justify-content: space-between;
+  margin-bottom: 14px;
   font-size: 13px;
-  color: #555;
-  gap: 8px;
 }
 
-.qr-settings select {
+.settings-label {
+  color: #555;
+  white-space: nowrap;
+}
+
+.qr-settings select,
+.qr-settings input[type="file"] {
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 3px 6px;
@@ -185,32 +184,57 @@ tbody tr.selected {
   background: #fff;
   color: #333;
   cursor: pointer;
+  width: 100%;
 }
 
-.label-file input[type="file"] {
-  font-size: 12px;
-  color: #555;
+.qr-settings input[type="color"] {
+  width: 100%;
+  height: 28px;
+  padding: 0 2px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
-.logo-preview {
+.settings-range {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
-.logo-preview img {
-  height: 32px;
+.settings-range input {
+  flex: 1;
+}
+
+.settings-range span {
+  font-size: 12px;
+  color: #888;
+  white-space: nowrap;
+  min-width: 36px;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: #333;
+}
+
+.logo-thumb {
+  height: 28px;
   border: 1px solid #eee;
   border-radius: 4px;
 }
 
-.logo-preview button {
+.btn-remove-logo {
   background: none;
-  border: none;
-  cursor: pointer;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 3px 8px;
+  font-size: 12px;
   color: #888;
-  font-size: 14px;
-  padding: 0 4px;
+  cursor: pointer;
 }
 
 .qr-actions {

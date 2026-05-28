@@ -1,49 +1,59 @@
 import { useRef, useEffect, useState } from 'react';
 import QRCodeStyling from 'qr-code-styling';
 
-const DOT_TYPES = ['square', 'dots', 'rounded', 'extra-rounded', 'classy-rounded'];
+const DOT_TYPES    = ['square', 'dots', 'rounded', 'extra-rounded', 'classy-rounded'];
 const CORNER_TYPES = ['square', 'dot', 'extra-rounded'];
+const CORNER_DOT_TYPES = ['square', 'dot'];
+const GRADIENT_TYPES   = ['linear', 'radial'];
+
+const DEFAULTS = {
+  size:            300,
+  dotsColor:       '#000000',
+  dotsColor2:      '#000000',
+  bgColor:         '#ffffff',
+  dotsType:        'square',
+  cornerType:      'square',
+  cornerDotType:   'square',
+  cornerColor:     '#000000',
+  cornerDotColor:  '#000000',
+  gradient:        false,
+  gradientType:    'linear',
+  logo:            null,
+  logoSize:        0.3,
+  logoMargin:      10,
+};
 
 export default function QRDisplay({ link }) {
   const containerRef = useRef();
   const qrRef = useRef(null);
-
-  const [settings, setSettings] = useState({
-    dotsColor: '#000000',
-    bgColor: '#ffffff',
-    dotsType: 'square',
-    cornerType: 'square',
-    logo: null,
-  });
+  const [s, setS] = useState(DEFAULTS);
 
   const url = link ? `${window.location.origin}/${link.slug}` : '';
 
   useEffect(() => {
     if (!containerRef.current) return;
-
-    const opts = buildOpts(url, settings);
-
+    const opts = buildOpts(url, s);
     if (!qrRef.current) {
       qrRef.current = new QRCodeStyling(opts);
       qrRef.current.append(containerRef.current);
     } else {
       qrRef.current.update(opts);
     }
-  }, [link, settings]);
+  }, [link, s]);
 
   if (!link) return <div className="panel empty-panel">Выберите ссылку из списка</div>;
 
-  const set = (field) => (e) => setSettings(s => ({ ...s, [field]: e.target.value }));
+  const set = (field) => (e) => setS(p => ({ ...p, [field]: e.target.value }));
+  const setNum = (field) => (e) => setS(p => ({ ...p, [field]: Number(e.target.value) }));
+  const toggle = (field) => () => setS(p => ({ ...p, [field]: !p[field] }));
 
   const handleLogo = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => setSettings(s => ({ ...s, logo: ev.target.result }));
+    reader.onload = (ev) => setS(p => ({ ...p, logo: ev.target.result }));
     reader.readAsDataURL(file);
   };
-
-  const removeLogo = () => setSettings(s => ({ ...s, logo: null }));
 
   return (
     <div className="panel qr-panel">
@@ -53,35 +63,87 @@ export default function QRDisplay({ link }) {
       <div ref={containerRef} className="qr-container" />
 
       <div className="qr-settings">
-        <label>
-          Цвет точек
-          <input type="color" value={settings.dotsColor} onChange={set('dotsColor')} />
+
+        <span className="settings-label">Размер</span>
+        <div className="settings-range">
+          <input type="range" min="200" max="1000" step="50" value={s.size} onChange={setNum('size')} />
+          <span>{s.size}px</span>
+        </div>
+
+        <span className="settings-label">Стиль точек</span>
+        <select value={s.dotsType} onChange={set('dotsType')}>
+          {DOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+
+        <span className="settings-label">Градиент</span>
+        <label className="toggle">
+          <input type="checkbox" checked={s.gradient} onChange={toggle('gradient')} />
+          {s.gradient ? 'Вкл' : 'Выкл'}
         </label>
-        <label>
-          Цвет фона
-          <input type="color" value={settings.bgColor} onChange={set('bgColor')} />
-        </label>
-        <label>
-          Стиль точек
-          <select value={settings.dotsType} onChange={set('dotsType')}>
-            {DOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-        </label>
-        <label>
-          Стиль углов
-          <select value={settings.cornerType} onChange={set('cornerType')}>
-            {CORNER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-        </label>
-        <label className="label-file">
-          Логотип
-          <input type="file" accept="image/png,image/svg+xml" onChange={handleLogo} />
-        </label>
-        {settings.logo && (
-          <div className="logo-preview">
-            <img src={settings.logo} alt="logo" />
-            <button onClick={removeLogo}>✕</button>
-          </div>
+
+        {s.gradient ? (
+          <>
+            <span className="settings-label">Тип градиента</span>
+            <select value={s.gradientType} onChange={set('gradientType')}>
+              {GRADIENT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+
+            <span className="settings-label">Цвет 1</span>
+            <input type="color" value={s.dotsColor} onChange={set('dotsColor')} />
+
+            <span className="settings-label">Цвет 2</span>
+            <input type="color" value={s.dotsColor2} onChange={set('dotsColor2')} />
+          </>
+        ) : (
+          <>
+            <span className="settings-label">Цвет точек</span>
+            <input type="color" value={s.dotsColor} onChange={set('dotsColor')} />
+          </>
+        )}
+
+        <span className="settings-label">Цвет фона</span>
+        <input type="color" value={s.bgColor} onChange={set('bgColor')} />
+
+        <span className="settings-label">Стиль углов</span>
+        <select value={s.cornerType} onChange={set('cornerType')}>
+          {CORNER_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+
+        <span className="settings-label">Цвет углов</span>
+        <input type="color" value={s.cornerColor} onChange={set('cornerColor')} />
+
+        <span className="settings-label">Стиль угл. точек</span>
+        <select value={s.cornerDotType} onChange={set('cornerDotType')}>
+          {CORNER_DOT_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+
+        <span className="settings-label">Цвет угл. точек</span>
+        <input type="color" value={s.cornerDotColor} onChange={set('cornerDotColor')} />
+
+        <span className="settings-label">Логотип</span>
+        <input type="file" accept="image/png,image/svg+xml" onChange={handleLogo} />
+
+        {s.logo && (
+          <>
+            <span className="settings-label">
+              <img src={s.logo} alt="logo" className="logo-thumb" />
+            </span>
+            <button className="btn-remove-logo" onClick={() => setS(p => ({ ...p, logo: null }))}>
+              Удалить лого
+            </button>
+
+            <span className="settings-label">Размер лого</span>
+            <div className="settings-range">
+              <input type="range" min="0.1" max="0.5" step="0.05" value={s.logoSize} onChange={setNum('logoSize')} />
+              <span>{Math.round(s.logoSize * 100)}%</span>
+            </div>
+
+            <span className="settings-label">Отступ лого</span>
+            <div className="settings-range">
+              <input type="range" min="0" max="20" step="1" value={s.logoMargin} onChange={setNum('logoMargin')} />
+              <span>{s.logoMargin}px</span>
+            </div>
+          </>
         )}
       </div>
 
@@ -98,14 +160,33 @@ export default function QRDisplay({ link }) {
 }
 
 function buildOpts(url, s) {
+  const dotsOptions = s.gradient
+    ? {
+        type: s.dotsType,
+        gradient: {
+          type: s.gradientType,
+          rotation: 0,
+          colorStops: [
+            { offset: 0, color: s.dotsColor },
+            { offset: 1, color: s.dotsColor2 },
+          ],
+        },
+      }
+    : { color: s.dotsColor, type: s.dotsType };
+
   return {
-    width: 300,
-    height: 300,
-    data: url,
-    image: s.logo || undefined,
-    dotsOptions: { color: s.dotsColor, type: s.dotsType },
-    backgroundOptions: { color: s.bgColor },
-    cornerSquareOptions: { type: s.cornerType },
-    imageOptions: { crossOrigin: 'anonymous', margin: 10 },
+    width:  s.size,
+    height: s.size,
+    data:   url,
+    image:  s.logo || undefined,
+    dotsOptions,
+    backgroundOptions:  { color: s.bgColor },
+    cornerSquareOptions: { type: s.cornerType, color: s.cornerColor },
+    cornerDotOptions:    { type: s.cornerDotType, color: s.cornerDotColor },
+    imageOptions: {
+      crossOrigin: 'anonymous',
+      imageSize:   s.logoSize,
+      margin:      s.logoMargin,
+    },
   };
 }
