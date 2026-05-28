@@ -39,12 +39,10 @@ export default function App() {
             onAdd={() => setShowModal(true)}
             onUpdate={handleUpdate}
           />
-        </div>
-        <div className="col-center">
-          <QRDisplay link={selected} />
+          <ClickStats link={selected} />
         </div>
         <div className="col-right">
-          <ClickStats link={selected} />
+          <QRDisplay link={selected} />
         </div>
       </main>
       {showModal && (
