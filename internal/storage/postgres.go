@@ -2,18 +2,20 @@ package storage
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Link struct {
-	ID        int64     `json:"id"`
-	Slug      string    `json:"slug"`
-	TargetURL string    `json:"target_url"`
-	Title     string    `json:"title"`
-	IsActive  bool      `json:"is_active"`
-	CreatedAt time.Time `json:"created_at"`
+	ID         int64           `json:"id"`
+	Slug       string          `json:"slug"`
+	TargetURL  string          `json:"target_url"`
+	Title      string          `json:"title"`
+	IsActive   bool            `json:"is_active"`
+	CreatedAt  time.Time       `json:"created_at"`
+	QRSettings json.RawMessage `json:"qr_settings"`
 }
 
 type Click struct {
@@ -55,7 +57,8 @@ func (s *Store) GetLink(ctx context.Context, slug string) (*Link, error) {
 
 func (s *Store) ListLinks(ctx context.Context) ([]Link, error) {
 	rows, err := s.pool.Query(ctx,
-		`SELECT id, slug, target_url, title, is_active, created_at FROM links ORDER BY created_at DESC`,
+		`SELECT id, slug, target_url, title, is_active, created_at, qr_settings
+		 FROM links ORDER BY created_at DESC`,
 	)
 	if err != nil {
 		return nil, err
@@ -65,7 +68,7 @@ func (s *Store) ListLinks(ctx context.Context) ([]Link, error) {
 	var links []Link
 	for rows.Next() {
 		var l Link
-		if err := rows.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt); err != nil {
+		if err := rows.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt, &l.QRSettings); err != nil {
 			return nil, err
 		}
 		links = append(links, l)
@@ -77,22 +80,25 @@ func (s *Store) CreateLink(ctx context.Context, slug, targetURL, title string) (
 	row := s.pool.QueryRow(ctx,
 		`INSERT INTO links (slug, target_url, title)
 		 VALUES ($1, $2, $3)
-		 RETURNING id, slug, target_url, title, is_active, created_at`,
+		 RETURNING id, slug, target_url, title, is_active, created_at, qr_settings`,
 		slug, targetURL, title,
 	)
 	var l Link
-	err := row.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt)
+	err := row.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt, &l.QRSettings)
 	return l, err
 }
 
-func (s *Store) SetLinkActive(ctx context.Context, id int64, active bool) (Link, error) {
+func (s *Store) PatchLink(ctx context.Context, id int64, isActive *bool, qrSettings json.RawMessage) (Link, error) {
 	row := s.pool.QueryRow(ctx,
-		`UPDATE links SET is_active = $1 WHERE id = $2
-		 RETURNING id, slug, target_url, title, is_active, created_at`,
-		active, id,
+		`UPDATE links SET
+		    is_active   = COALESCE($1, is_active),
+		    qr_settings = COALESCE($2, qr_settings)
+		 WHERE id = $3
+		 RETURNING id, slug, target_url, title, is_active, created_at, qr_settings`,
+		isActive, qrSettings, id,
 	)
 	var l Link
-	err := row.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt)
+	err := row.Scan(&l.ID, &l.Slug, &l.TargetURL, &l.Title, &l.IsActive, &l.CreatedAt, &l.QRSettings)
 	return l, err
 }
 

@@ -71,14 +71,24 @@ func (a *API) PatchLink(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var body struct {
-		IsActive *bool `json:"is_active"`
+		IsActive   *bool            `json:"is_active"`
+		QRSettings *json.RawMessage `json:"qr_settings"`
 	}
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil || body.IsActive == nil {
-		jsonError(w, "is_active required", http.StatusBadRequest)
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		jsonError(w, "invalid json", http.StatusBadRequest)
+		return
+	}
+	if body.IsActive == nil && body.QRSettings == nil {
+		jsonError(w, "is_active or qr_settings required", http.StatusBadRequest)
 		return
 	}
 
-	link, err := a.store.SetLinkActive(r.Context(), id, *body.IsActive)
+	var qrSettings json.RawMessage
+	if body.QRSettings != nil {
+		qrSettings = *body.QRSettings
+	}
+
+	link, err := a.store.PatchLink(r.Context(), id, body.IsActive, qrSettings)
 	if errors.Is(err, pgx.ErrNoRows) {
 		jsonError(w, "not found", http.StatusNotFound)
 		return

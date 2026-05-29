@@ -44,9 +44,37 @@ const DEFAULTS = {
 export default function QRDisplay({ link }) {
   const containerRef = useRef();
   const [s, setS] = useState(DEFAULTS);
+  const initialized = useRef(false);
 
   const url = link ? `${window.location.origin}/${link.slug}` : '';
 
+  // Загружаем настройки из БД при смене ссылки
+  useEffect(() => {
+    initialized.current = false;
+    if (link?.qr_settings && Object.keys(link.qr_settings).length > 0) {
+      setS({ ...DEFAULTS, ...link.qr_settings });
+    } else {
+      setS(DEFAULTS);
+    }
+  }, [link?.id]);
+
+  // Авто-сохранение с debounce 500ms, только после инициализации
+  useEffect(() => {
+    if (!link || !initialized.current) {
+      initialized.current = true;
+      return;
+    }
+    const timer = setTimeout(() => {
+      fetch(`/api/links/${link.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ qr_settings: s }),
+      });
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [s]);
+
+  // Рендер превью
   useEffect(() => {
     if (!containerRef.current || !url) return;
     containerRef.current.innerHTML = '';
