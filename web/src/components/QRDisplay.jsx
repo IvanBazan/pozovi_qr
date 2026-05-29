@@ -213,8 +213,8 @@ function buildOpts(url, s, size) {
     image:  s.logo || undefined,
     dotsOptions,
     backgroundOptions:   { color: s.bgColor },
-    cornerSquareOptions: { type: s.cornerType,    color: s.cornerColor },
-    cornerDotOptions:    { type: s.cornerDotType, color: s.cornerDotColor },
+    cornersSquareOptions: { type: s.cornerType,    color: s.cornerColor },
+    cornersDotOptions:    { type: s.cornerDotType, color: s.cornerDotColor },
     imageOptions: {
       crossOrigin: 'anonymous',
       imageSize:   s.logoSize,
