@@ -18,8 +18,8 @@ export default function LinkTable({ links, selected, onSelect, onAdd, onUpdate }
           <tr>
             <th>Slug</th>
             <th>Title</th>
-            <th>URL</th>
-            <th>Активна</th>
+            <th className="col-url">URL</th>
+            <th className="col-status"></th>
           </tr>
         </thead>
         <tbody>
@@ -32,10 +32,11 @@ export default function LinkTable({ links, selected, onSelect, onAdd, onUpdate }
               <td><code>{link.slug}</code></td>
               <td>{link.title || '—'}</td>
               <td className="url-cell">{link.target_url}</td>
-              <td>
+              <td className="col-status">
                 <button
                   className={`btn-toggle ${link.is_active ? 'active' : 'inactive'}`}
                   onClick={(e) => handleToggle(e, link)}
+                  title={link.is_active ? 'Деактивировать' : 'Активировать'}
                 >
                   {link.is_active ? '✓' : '✗'}
                 </button>

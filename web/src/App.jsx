@@ -12,7 +12,10 @@ export default function App() {
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    fetchLinks().then(setLinks);
+    fetchLinks().then(links => {
+      setLinks(links);
+      if (links.length > 0) setSelected(links[0]);
+    });
   }, []);
 
   const handleCreated = (link) => {
@@ -25,13 +28,17 @@ export default function App() {
     setSelected(s => s?.id === link.id ? link : s);
   };
 
+  const handleSettingsUpdate = (linkId, qrSettings) => {
+    setLinks(l => l.map(x => x.id === linkId ? { ...x, qr_settings: qrSettings } : x));
+  };
+
   return (
     <div className="layout">
       <header>
         <h1>pozovi.tours — QR Admin</h1>
       </header>
       <main>
-        <div className="left">
+        <div className="col-left">
           <LinkTable
             links={links}
             selected={selected}
@@ -39,10 +46,10 @@ export default function App() {
             onAdd={() => setShowModal(true)}
             onUpdate={handleUpdate}
           />
-        </div>
-        <div className="right">
-          <QRDisplay link={selected} />
           <ClickStats link={selected} />
+        </div>
+        <div className="col-right">
+          <QRDisplay link={selected} onSettingsUpdate={handleSettingsUpdate} />
         </div>
       </main>
       {showModal && (
