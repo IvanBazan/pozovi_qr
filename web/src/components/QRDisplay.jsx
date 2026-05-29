@@ -41,7 +41,7 @@ const DEFAULTS = {
   logoMargin:     10,
 };
 
-export default function QRDisplay({ link }) {
+export default function QRDisplay({ link, onSettingsUpdate }) {
   const containerRef = useRef();
   const [s, setS] = useState(DEFAULTS);
   const initialized = useRef(false);
@@ -69,6 +69,8 @@ export default function QRDisplay({ link }) {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ qr_settings: s }),
+      }).then(r => {
+        if (r.ok) onSettingsUpdate?.(link.id, s);
       });
     }, 500);
     return () => clearTimeout(timer);

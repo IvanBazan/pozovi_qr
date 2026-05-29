@@ -28,6 +28,10 @@ export default function App() {
     setSelected(s => s?.id === link.id ? link : s);
   };
 
+  const handleSettingsUpdate = (linkId, qrSettings) => {
+    setLinks(l => l.map(x => x.id === linkId ? { ...x, qr_settings: qrSettings } : x));
+  };
+
   return (
     <div className="layout">
       <header>
@@ -45,7 +49,7 @@ export default function App() {
           <ClickStats link={selected} />
         </div>
         <div className="col-right">
-          <QRDisplay link={selected} />
+          <QRDisplay link={selected} onSettingsUpdate={handleSettingsUpdate} />
         </div>
       </main>
       {showModal && (
