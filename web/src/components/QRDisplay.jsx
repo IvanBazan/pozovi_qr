@@ -206,6 +206,7 @@ function buildOpts(url, s, size) {
     : { color: s.dotsColor, type: s.dotsType };
 
   return {
+    type:   'svg',
     width:  size,
     height: size,
     data:   url,
